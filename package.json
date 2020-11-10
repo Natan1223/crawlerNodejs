@@ -1,0 +1,24 @@
+{
+  "name": "crawler-html",
+  "version": "1.0.0",
+  "description": "Projeto para recuperação de informações do WA Markting",
+  "main": "index.js",
+  "bin": {
+    "crawler-html": "server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.6",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node node_modules/nodemon/bin/nodemon bin/server"
+  },
+  "author": "Natã Bandeira",
+  "license": "ISC",
+  "dev": "node node_modules/nodemon/bin/nodemon bin/server"
+}
