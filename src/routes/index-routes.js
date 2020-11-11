@@ -5,12 +5,16 @@ const express = require('express');
 const router = express.Router();
 
 
-router.get('/teste/:numeroLote',(req, res)=> {
+router.get('/import-detalhes/:numeroLote',(req, res)=> {
 
     numeroLote = req.params.numeroLote;
 
+    data = new Date();
+    mes = (data.getMonth()+1)
+    ano = data.getFullYear()
+
     const options = {
-        uri: 'http://localhost/img/captacao'+numeroLote+'.html',
+        uri: 'http://localhost/img/'+ano+'/'+mes+'/captacao'+numeroLote+'.html',
         transform: function (body) {
             return cheerio.load(body)
         }
@@ -22,18 +26,51 @@ router.get('/teste/:numeroLote',(req, res)=> {
 
     rp(options).then(($) => {
         const results = []
-        const resultsCab = []
         $('tbody tr').each((i, item) => {
 
             valorArquivo = $(item).find('td').text().trim()
             const result = {
-                resultNumero : parseInt(valorArquivo.substring(0,13), 10),
-                resultStatus :valorArquivo.substring(13,20)
+                resultNumero : parseInt(valorArquivo.substring(4,13), 10),
+                resultStatus : valorArquivo.substring(13,14)
             }
 
             if(result.resultNumero !== "")
                 results.push(result)
         })
+
+        resultContatos = results.slice(6);
+
+        processarDados(resultContatos)
+    })
+    .catch((err) => {
+    console.log(err);
+    });
+});
+
+
+
+router.get('/import-dados-gerais/:numeroLote',(req, res)=> {
+
+    numeroLote = req.params.numeroLote;
+
+    data = new Date();
+    mes = (data.getMonth()+1)
+    ano = data.getFullYear()
+
+    const options = {
+        uri: 'http://localhost/img/'+ano+'/'+mes+'/captacao'+numeroLote+'.html',
+        transform: function (body) {
+            return cheerio.load(body)
+        }
+    }
+
+    function processarDados(dados){
+        res.json(dados);
+    }
+
+    rp(options).then(($) => {
+       
+        const resultsCab = []
 
         $('#overview > table > tbody > tr:nth-child(2)').each((i, item) => {
 
@@ -52,14 +89,9 @@ router.get('/teste/:numeroLote',(req, res)=> {
         })
 
         resultCabecalho = resultsCab[0];
-        resultContatos = results.slice(6);
-        
-        data = {
-            resultCabecalho,
-            resultContatos
-        }
 
-        processarDados(data)
+        
+        processarDados(resultCabecalho)
     })
     .catch((err) => {
     console.log(err);
